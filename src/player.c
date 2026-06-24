@@ -1,8 +1,7 @@
 #include "player.h"
 #include <raylib.h>
+#include <raymath.h>
 
-#define GRAVITY 800.0f
-#define JUMP_FORCE -400.0f
 #define MOVE_SPEED 200.0f
 
 Player CreatePlayer(float x, float y) {
@@ -11,30 +10,25 @@ Player CreatePlayer(float x, float y) {
   return p;
 }
 
-void UpdatePlayer(Player *player) {
-  float dt = GetFrameTime();
+void UpdatePlayer(Player *player, float dt) {
+  player->velocity.x = 0;
+  player->velocity.y = 0;
 
-  if (IsKeyDown(KEY_RIGHT))
-    player->velocity.x = MOVE_SPEED;
-  else if (IsKeyDown(KEY_LEFT))
-    player->velocity.x = -MOVE_SPEED;
-  else
-    player->velocity.x = 0;
+  if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
+    player->velocity.x = 1;
+  if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
+    player->velocity.x = -1;
+  if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
+    player->velocity.y = 1;
+  if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
+    player->velocity.y = -1;
 
-  player->velocity.y += GRAVITY * dt;
-  player->rect.x += player->velocity.x * dt;
-  player->rect.y += player->velocity.y * dt;
+  Vector2 dir = Vector2Normalize(player->velocity);
 
-  if (player->rect.y >= 500) {
-    player->rect.y = 500;
-    player->velocity.y = 0;
-    player->isGrounded = true;
+  dir = Vector2Scale(dir, MOVE_SPEED);
 
-    if (IsKeyPressed(KEY_SPACE)) {
-      player->velocity.y = JUMP_FORCE;
-      player->isGrounded = false;
-    }
-  }
+  player->rect.x += dir.x * dt;
+  player->rect.y += dir.y * dt;
 }
 
 void DrawPlayer(Player *player) {

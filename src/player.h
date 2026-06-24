@@ -10,7 +10,7 @@ typedef struct {
 } Player;
 
 Player CreatePlayer(float x, float y);
-void UpdatePlayer(Player *player);
+void UpdatePlayer(Player *player, float dt);
 void DrawPlayer(Player *player);
 
 #endif
